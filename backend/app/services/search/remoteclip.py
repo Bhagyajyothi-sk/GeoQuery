@@ -36,6 +36,7 @@ from typing import Optional
 import numpy as np
 import torch
 
+
 logger = logging.getLogger("geoquery.remoteclip")
 
 # ── Architecture constants ─────────────────────────────────────────────────────

@@ -52,9 +52,10 @@ def search_sentinel_scenes(
     catalog = Client.open(settings.stac_url)
     search_kwargs: Dict[str, Any] = {
         "collections": [settings.stac_collection],
-        "datetime": f"{start_date}/{end_date}",
         "query": {"eo:cloud_cover": {"lt": max_cloud_cover}},
     }
+    if start_date or end_date:
+        search_kwargs["datetime"] = f"{start_date or '..'}/{end_date or '..'}"
 
     if aoi is not None:
         normalized = normalize_geometry(aoi)
@@ -135,9 +136,10 @@ def get_best_sentinel_scene(
     catalog = Client.open(settings.stac_url)
     search_kwargs: Dict[str, Any] = {
         "collections": [settings.stac_collection],
-        "datetime": f"{start_date}/{end_date}",
         "query": {"eo:cloud_cover": {"lt": max_cloud_cover}},
     }
+    if start_date or end_date:
+        search_kwargs["datetime"] = f"{start_date or '..'}/{end_date or '..'}"
 
     if normalized.get("type") in ("Polygon", "MultiPolygon"):
         search_kwargs["intersects"] = normalized
