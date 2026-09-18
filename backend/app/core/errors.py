@@ -29,6 +29,17 @@ class NoCandidatesError(HTTPException):
         super().__init__(status_code=404, detail=detail)
 
 
+class InvalidAOIError(HTTPException):
+    """Raised when a supplied AOI/bbox is malformed or out of range.
+
+    This is a client-side input problem (422), distinct from a pipeline
+    outage (503), so callers can tell a bad request from a broken service.
+    """
+
+    def __init__(self, detail: str = "Invalid area of interest"):
+        super().__init__(status_code=422, detail=detail)
+
+
 class GeoAnalysisError(HTTPException):
     """Raised when the geospatial / STAC pipeline fails."""
 

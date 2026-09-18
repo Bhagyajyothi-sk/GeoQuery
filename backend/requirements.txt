@@ -1,5 +1,9 @@
 # GeoQueryAI — Python dependencies
-# Install with: pip install -r requirements.txt
+# Install with: pip install -r backend/requirements.txt
+#
+# Everything below is needed to start the server and run the full test suite.
+# The project runs end-to-end in mock mode with just these — no API keys,
+# no model weights and no network access required.
 
 # ── Web framework ──────────────────────────────────────────────────────────────
 fastapi>=0.115.0
@@ -19,8 +23,27 @@ rasterio>=1.3.0
 numpy>=1.26.0
 shapely>=2.0.0
 
-# ── AI / ML (install separately — not required to start the server) ───────────
-# google-generativeai    # Gemini — plug into services/ai/interface.py
-# torch                  # RemoteCLIP dependency
-# faiss-cpu              # FAISS — plug into services/search/interface.py
-# (RemoteCLIP has no PyPI package; install from source per your implementation)
+# ── Imaging & rendering ───────────────────────────────────────────────────────
+# matplotlib backs the /api/maps/* NDVI & NDWI map renderer
+# (app/services/geo/visualization_service.py).
+# Pillow backs the tile cutter (app/services/search/tiling.py).
+matplotlib>=3.8.0
+pillow>=10.0.0
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest>=7.4.0
+httpx>=0.27.0          # required by fastapi.testclient
+
+# ── AI / ML extras (optional — the server starts and tests pass without them) ──
+# Install these only when switching a service out of mock mode.
+#
+#   MOCK_AI=false      → pip install google-generativeai
+#   MOCK_SEARCH=false  → pip install torch open-clip-torch faiss-cpu
+#
+# google-generativeai>=0.7.0    # Gemini query parser + grounded explanation
+# torch>=2.0.0                  # RemoteCLIP backbone
+# open-clip-torch>=2.24.0       # ViT-B-32 architecture + tokenizer
+# faiss-cpu>=1.7.4              # vector index
+#
+# The RemoteCLIP *weights* are not on PyPI. Download
+# RemoteCLIP-ViT-B-32.pt into models/ — see README.

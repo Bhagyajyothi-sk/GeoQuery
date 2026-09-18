@@ -33,8 +33,6 @@ data/satellite_tiles/*
 !data/satellite_tiles/.gitkeep
 !data/satellite_tiles/metadata.json
 !data/satellite_tiles/README.md
-!data/satellite_tiles/evaluation_labels.json
-
 
 
 # IDE & OS files
@@ -42,3 +40,7 @@ data/satellite_tiles/*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Rendered map output from /api/maps/*
+backend/app/static/maps/*.png
+!backend/app/static/maps/.gitkeep
