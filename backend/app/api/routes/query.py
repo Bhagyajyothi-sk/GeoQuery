@@ -37,6 +37,7 @@ from app.core.errors import (
     SearchServiceError,
     NoCandidatesError,
     GeoAnalysisError,
+    InvalidAOIError,
     NoSatelliteDataError,
 )
 
@@ -164,7 +165,7 @@ async def run_query(body: QueryRequest) -> QueryPipelineResponse:
 
             explanation = explain_evidence(evidence)
 
-        except (NoSatelliteDataError, GeoAnalysisError) as exc:
+        except (NoSatelliteDataError, GeoAnalysisError, InvalidAOIError) as exc:
             logger.warning("Geospatial analysis skipped/error: %s", exc)
             analysis_result = AnalysisResult(
                 analysis=structured.analysis,
