@@ -57,6 +57,23 @@ class SceneMetadata(BaseModel):
     bbox: list[float] | None
 
 
+class Evidence(BaseModel):
+    """
+    Structured evidence layer collected from the geospatial analysis pipeline.
+    Passed exclusively to the Grounded Gemini explanation module.
+    Contains ONLY values actually retrieved or computed — missing values are None.
+    """
+
+    location: str | None = Field(default=None, description="Resolved place name or search location hint.")
+    bbox: list[float] | None = Field(default=None, description="Bounding box [min_lon, min_lat, max_lon, max_lat] in EPSG:4326.")
+    scene_id: str | None = Field(default=None, description="Sentinel-2 scene identifier.")
+    acquisition_date: str | None = Field(default=None, description="Observation datetime (ISO format).")
+    analysis: str = Field(..., description="Type of geospatial analysis performed.")
+    computed_values: dict[str, Any] = Field(default_factory=dict, description="Numeric metrics computed from COG bands.")
+    change_metrics: dict[str, Any] = Field(default_factory=dict, description="Multi-temporal change metrics if computed.")
+    source: str = Field(default="Sentinel-2 L2A via Planetary Computer STAC", description="Data source description.")
+
+
 class AnalysisResult(BaseModel):
     """
     Output from the geospatial analysis pipeline.
@@ -81,3 +98,4 @@ class AnalysisResult(BaseModel):
         description="Pipeline execution status.",
     )
     message: str | None = Field(default=None, description="Human-readable status message.")
+

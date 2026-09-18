@@ -41,28 +41,52 @@ async def lifespan(app: FastAPI):
     """
     Application startup / shutdown hook.
 
-    Startup:
-      - Log service mode (mock vs real).
-      - Future: initialise RemoteCLIP model and FAISS index here so they
-        are loaded once and reused across requests (not per-call).
+    When MOCK_SEARCH=false, pre-loads the RemoteCLIP encoder and FAISS index
+    so that the first real request has no cold-start latency.
 
     ════════════════════════════════════════════════════════════════════
       PLUG-IN POINT: Model initialisation at startup
     ════════════════════════════════════════════════════════════════════
-      Load RemoteCLIP weights and FAISS index here:
+      RemoteCLIP and FAISS are loaded here when MOCK_SEARCH=false.
+      To force a specific checkpoint path at startup:
 
-        from app.services.search.interface import load_models
-        load_models()   # call your initialiser
-
-      This avoids reloading 1–2 GB models on every request.
+        RemoteCLIPEncoder.instance("/abs/path/to/weights.pt")
+        FAISSStore.instance("/abs/path/to/index", "/abs/path/to/meta.json")
     ════════════════════════════════════════════════════════════════════
     """
     logger.info("GeoQueryAI %s starting up", settings.app_version)
-    logger.info("AI service   : MOCK (replace services/ai/interface.py)")
-    logger.info("Search service: MOCK (replace services/search/interface.py)")
-    logger.info("Geo service  : REAL (STAC + COG via Planetary Computer)")
+    logger.info(
+        "AI service    : %s", "MOCK" if settings.mock_ai else "REAL (Gemini)"
+    )
+    logger.info(
+        "Search service: %s", "MOCK" if settings.mock_search else "REAL (RemoteCLIP + FAISS)"
+    )
+    logger.info(
+        "Geo service   : %s", "MOCK" if settings.mock_geo else "REAL (Nominatim)"
+    )
+
+    # ── Pre-warm RemoteCLIP + FAISS (real mode only) ──────────────────────────
+    if not settings.mock_search:
+        logger.info("Search: warming up RemoteCLIP encoder and FAISS store...")
+        try:
+            from app.services.search.remoteclip import RemoteCLIPEncoder
+            from app.services.search.faiss_store import FAISSStore
+
+            RemoteCLIPEncoder.instance()   # loads checkpoint once
+            FAISSStore.instance()          # loads FAISS index once
+
+            logger.info("Search: RemoteCLIP and FAISS ready.")
+        except Exception as exc:
+            # Non-fatal at startup — requests will fail with SearchServiceError
+            logger.error(
+                "Search: warm-up failed (%s). "
+                "Set MOCK_SEARCH=true for development without tile data.",
+                exc,
+            )
+
     yield
     logger.info("GeoQueryAI shutting down")
+
 
 
 # ── App factory ────────────────────────────────────────────────────────────────

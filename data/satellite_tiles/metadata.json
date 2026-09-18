@@ -1,0 +1,36 @@
+[
+    {
+        "tile_id": "ulsoor_001",
+        "image_path": "data/satellite_tiles/ulsoor_001.png",
+        "scene_id": "S2C_MSIL2A_20260914T050651_R019_T43PGQ_20260914T100610",
+        "center_lat": 12.981,
+        "center_lon": 77.5946,
+        "crs": "EPSG:32643",
+        "pixel_size_m": 10,
+        "width_px": 100,
+        "height_px": 100,
+        "bbox": [
+            77.58994751963952,
+            12.976529216635141,
+            77.59925264634654,
+            12.985470667160499
+        ]
+    },
+    {
+        "tile_id": "urban_002",
+        "image_path": "data/satellite_tiles/urban_002.png",
+        "scene_id": "S2C_MSIL2A_20260616T050651_R019_T43PGQ_20260616T100816",
+        "center_lat": 12.9716,
+        "center_lon": 77.5946,
+        "crs": "EPSG:32643",
+        "pixel_size_m": 10,
+        "width_px": 100,
+        "height_px": 100,
+        "bbox": [
+            77.58994772771239,
+            12.967129180724577,
+            77.59925243814308,
+            12.976070703134335
+        ]
+    }
+]

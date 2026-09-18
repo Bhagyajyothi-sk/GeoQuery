@@ -31,6 +31,9 @@ indexes/*.index
 indexes/*.pkl
 data/satellite_tiles/*
 !data/satellite_tiles/.gitkeep
+!data/satellite_tiles/metadata.json
+!data/satellite_tiles/README.md
+
 
 # IDE & OS files
 .vscode/

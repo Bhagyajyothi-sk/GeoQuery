@@ -263,3 +263,195 @@ def test_geographic_result_grounded():
     )
     assert geo.grounded is True
     assert len(geo.bbox) == 4
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 8. Evidence Schema & Grounded Gemini Explanation Tests
+# ─────────────────────────────────────────────────────────────────────────────
+
+def test_evidence_model_validation():
+    """Evidence model must validate with only present values (no missing defaults)."""
+    from app.schemas.analysis import Evidence
+
+    ev = Evidence(
+        location="Bengaluru",
+        bbox=[77.58, 12.97, 77.60, 12.98],
+        scene_id="S2C_12345",
+        acquisition_date="2026-09-14T10:06:10Z",
+        analysis="water_extent",
+        computed_values={"water_fraction": 0.45, "water_area_km2": 1.25},
+    )
+    assert ev.location == "Bengaluru"
+    assert ev.scene_id == "S2C_12345"
+    assert ev.computed_values["water_area_km2"] == 1.25
+    assert ev.source == "Sentinel-2 L2A via Planetary Computer STAC"
+
+
+def test_explain_evidence_mock_generation():
+    """explain_evidence() in mock mode generates a grounded string strictly from metrics."""
+    from app.schemas.analysis import Evidence
+    from app.services.ai.interface import explain_evidence
+
+    ev = Evidence(
+        location="Ulsoor Lake",
+        scene_id="S2C_ULSOOR_01",
+        acquisition_date="2026-09-14",
+        analysis="water_extent",
+        computed_values={"water_pixels": 120, "water_area_km2": 0.12},
+    )
+    explanation = explain_evidence(ev)
+    assert "S2C_ULSOOR_01" in explanation
+    assert "water_extent" in explanation
+    assert "water_area_km2: 0.12" in explanation
+
+
+def test_full_pipeline_response_extended_fields(client):
+    """
+    POST /api/query in end-to-end mode returns selected_candidate, analysis_result,
+    evidence, and explanation objects.
+    """
+    resp = client.post(
+        "/api/query",
+        json={"query": "Calculate the water extent for Ulsoor Lake in Bengaluru"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert "selected_candidate" in data
+    assert "analysis_result" in data
+    assert "evidence" in data
+    assert "explanation" in data
+
+    if data["selected_candidate"]:
+        assert "bbox" in data["selected_candidate"]
+        assert len(data["selected_candidate"]["bbox"]) == 4
+
+    if data["evidence"]:
+        assert data["evidence"]["analysis"] in VALID_ANALYSIS_VALUES
+        assert "computed_values" in data["evidence"]
+
+    if data["explanation"]:
+        assert isinstance(data["explanation"], str)
+        assert len(data["explanation"]) > 10
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 9. Candidate Validation Service Unit & Integration Tests
+# ─────────────────────────────────────────────────────────────────────────────
+
+def test_validator_candidate_inside_location_accepted():
+    """Candidate tile whose bbox contains the geocoded location is accepted."""
+    from app.schemas.search import SemanticCandidate
+    from app.schemas.query import GeographicResult
+    from app.services.search.validator import validate_candidates
+
+    ulsoor_tile = SemanticCandidate(
+        tile_id="ulsoor_001",
+        bbox=[77.5899, 12.9765, 77.5992, 12.9854],
+        score=0.85,
+    )
+
+    geo = GeographicResult(
+        name="Ulsoor Lake",
+        latitude=12.981,
+        longitude=77.5946,
+        grounded=True,
+    )
+
+    result = validate_candidates([ulsoor_tile], geographic_result=geo)
+    assert result.validation_status == "passed"
+    assert result.selected_candidate is not None
+    assert result.selected_candidate.tile_id == "ulsoor_001"
+    assert result.details[0].spatial_match is True
+
+
+def test_validator_candidate_outside_location_rejected():
+    """Candidate tile whose bbox is far from the geocoded location is rejected."""
+    from app.schemas.search import SemanticCandidate
+    from app.schemas.query import GeographicResult
+    from app.services.search.validator import validate_candidates
+
+    urban_tile = SemanticCandidate(
+        tile_id="urban_002",
+        bbox=[77.5899, 12.9671, 77.5992, 12.9760],
+        score=0.92,
+    )
+
+    geo = GeographicResult(
+        name="Ulsoor Lake",
+        latitude=12.981,
+        longitude=77.5946,
+        grounded=True,
+    )
+
+    result = validate_candidates([urban_tile], geographic_result=geo)
+    assert result.validation_status == "rejected"
+    assert result.selected_candidate is None
+    assert result.details[0].spatial_match is False
+
+
+def test_validator_selects_spatial_match_over_higher_score():
+    """
+    Validation MUST select Rank 2 candidate that matches spatial constraints
+    over Rank 1 candidate with a higher RemoteCLIP score that fails spatial check.
+    """
+    from app.schemas.search import SemanticCandidate
+    from app.schemas.query import GeographicResult
+    from app.services.search.validator import validate_candidates
+
+    rank1_urban = SemanticCandidate(
+        tile_id="urban_002",
+        bbox=[77.5899, 12.9671, 77.5992, 12.9760],
+        score=0.95,
+    )
+    rank2_ulsoor = SemanticCandidate(
+        tile_id="ulsoor_001",
+        bbox=[77.5899, 12.9765, 77.5992, 12.9854],
+        score=0.82,
+    )
+
+    geo = GeographicResult(
+        name="Ulsoor Lake",
+        latitude=12.981,
+        longitude=77.5946,
+        grounded=True,
+    )
+
+    result = validate_candidates([rank1_urban, rank2_ulsoor], geographic_result=geo)
+    assert result.validation_status == "passed"
+    assert result.selected_candidate is not None
+    assert result.selected_candidate.tile_id == "ulsoor_001"
+    assert result.details[0].passed is False
+    assert result.details[1].passed is True
+
+
+def test_validator_no_location_accepts_first():
+    """When no location is supplied, spatial check passes by default and Rank 1 candidate is selected."""
+    from app.schemas.search import SemanticCandidate
+    from app.services.search.validator import validate_candidates
+
+    c1 = SemanticCandidate(tile_id="tile_1", bbox=[77.50, 12.90, 77.60, 13.00], score=0.88)
+    c2 = SemanticCandidate(tile_id="tile_2", bbox=[77.60, 13.00, 77.70, 13.10], score=0.85)
+
+    result = validate_candidates([c1, c2], geographic_result=None)
+    assert result.validation_status == "passed"
+    assert result.selected_candidate.tile_id == "tile_1"
+
+
+def test_query_route_unmatched_location_returns_graceful_response(client):
+    """
+    Querying a location that has no matching tile in the index returns validation_status='rejected'
+    and selected_candidate=None gracefully.
+    """
+    resp = client.post(
+        "/api/query",
+        json={"query": "Show me water bodies in Mumbai"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert "validation_status" in data
+    assert "validation_reason" in data
+    assert "validation_details" in data
+
+

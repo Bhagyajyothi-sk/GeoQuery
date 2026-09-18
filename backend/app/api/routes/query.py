@@ -1,27 +1,23 @@
 """
 GeoQueryAI — POST /api/query
 
-Main orchestration endpoint. Accepts a natural-language query and runs
-the GeoQueryAI pipeline up to (and including) semantic retrieval.
+Main end-to-end orchestration endpoint. Accepts a free-text natural language query
+and executes the complete GeoQueryAI pipeline:
 
-Pipeline (this phase):
+Pipeline stages:
+  1. parse_query()         → Gemini StructuredQuery (visual_query, location, analysis, dates)
+  2. geocode()             → Geographic Grounding (resolves location place name to lat/lon/bbox)
+  3. semantic_search()     → RemoteCLIP + FAISS Top-K Candidate Tiles
+  4. validate_candidates() → Spatial & Data Integrity Filter (validates location match, selects tile)
+  5. analyze()             → STAC Scene Search & COG Raster Analysis (NDVI, NDWI, water extent)
+  6. Evidence Layer        → Structured evidence of computed physical metrics
+  7. explain_evidence()    → Grounded Gemini Explanation strictly based on Evidence
 
-  raw_query
-    ↓  [QUERY_RECEIVED]
-  parse_query()                       → StructuredQuery
-    ↓  [QUERY_PARSED]
-  geocode()          (if location)    → GeographicResult
-    ↓  [LOCATION_GROUNDED]
-  semantic_search()                   → CandidateResponse
-    ↓  [CANDIDATES_RETRIEVED]
-  return QueryPipelineResponse
-
-STOP HERE — geospatial analysis (STAC + COG) is NOT run in this phase.
-Each intermediate result is returned as a separate inspectable field
-so AI/ML components can be debugged in isolation.
-
-Next phase: wire the top candidate bbox into analyze() after candidates
-            are validated against STAC availability.
+Architecture Note on Roles:
+  - RemoteCLIP          : Semantic visual concept matching (candidate generation)
+  - Candidate Validator : Spatial consistency filter (geospatial grounding check)
+  - STAC / COG Service  : Scene availability verification and pixel computation
+  - Grounded Gemini     : Fact-checked explanation strictly from computed evidence
 """
 
 import uuid
@@ -31,13 +27,18 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from app.schemas.query import QueryRequest, QueryPipelineResponse
-from app.services.ai.interface import parse_query
+from app.schemas.analysis import AnalysisResult, Evidence
+from app.services.ai.interface import parse_query, explain_evidence
 from app.services.search.interface import semantic_search
+from app.services.search.validator import validate_candidates
 from app.services.geo.geocoding_interface import geocode
+from app.services.geo.interface import analyze
 from app.core.errors import (
     AIServiceError,
     SearchServiceError,
     NoCandidatesError,
+    GeoAnalysisError,
+    NoSatelliteDataError,
 )
 
 logger = logging.getLogger("geoquery.query")
@@ -47,31 +48,30 @@ router = APIRouter()
 @router.post(
     "/query",
     response_model=QueryPipelineResponse,
-    summary="Natural-language GeoQueryAI pipeline (up to semantic retrieval)",
+    summary="Natural-language GeoQueryAI pipeline (end-to-end)",
     description=(
-        "Accepts a free-text natural-language query and runs the GeoQueryAI pipeline: "
-        "AI query parsing → geographic grounding → semantic satellite-image retrieval. "
-        "Returns all intermediate stage outputs for inspection. "
-        "**Geospatial analysis (STAC/COG) is not run in this phase.**"
+        "Accepts a free-text natural-language query and runs the complete GeoQueryAI pipeline: "
+        "Gemini query parsing → geographic grounding → RemoteCLIP + FAISS semantic retrieval → "
+        "candidate spatial validation → STAC/COG raster analysis → Evidence JSON → grounded Gemini explanation."
     ),
     responses={
-        200: {"description": "Pipeline completed successfully — candidates returned."},
+        200: {"description": "Pipeline completed successfully — full response returned."},
         404: {"description": "No candidate tiles found for the given query."},
         503: {"description": "An upstream service (AI or search) is unavailable."},
     },
 )
 async def run_query(body: QueryRequest) -> QueryPipelineResponse:
     """
-    GeoQueryAI orchestration endpoint — Phase 2 (up to semantic retrieval).
+    GeoQueryAI end-to-end orchestration endpoint.
 
-    Stages:
-      1. parse_query()    — AI service (Gemini / mock)
-      2. geocode()        — geographic grounding (Nominatim / mock)
-      3. semantic_search() — RemoteCLIP + FAISS (mock)
-
-    HTTP error codes:
-      503 — AI or search service failure
-      404 — No candidate tiles found
+    Pipeline stages:
+      1. parse_query()         — Gemini / mock query parser
+      2. geocode()             — geographic grounding (Nominatim / mock)
+      3. semantic_search()     — RemoteCLIP + FAISS candidate retrieval
+      4. validate_candidates() — Candidate spatial consistency validation & selection
+      5. analyze()             — STAC scene search & COG raster analysis
+      6. Evidence layer        — collects only computed & verified metrics
+      7. explain_evidence()    — Grounded Gemini explanation strictly from Evidence
     """
     query_id = str(uuid.uuid4())
 
@@ -91,9 +91,6 @@ async def run_query(body: QueryRequest) -> QueryPipelineResponse:
     )
 
     # ── Stage 2: Geographic Grounding ─────────────────────────────────────────
-    # Only ground if the AI parser returned a location.
-    # Coordinates from GeographicResult are NEVER used as satellite tile coords —
-    # they serve as a hint for semantic search filtering only.
     geographic_result = None
     if structured.location:
         geographic_result = geocode(structured.location)
@@ -109,13 +106,10 @@ async def run_query(body: QueryRequest) -> QueryPipelineResponse:
         logger.info("LOCATION_GROUNDED query_id=%s no location provided — skipping geocoding", query_id)
 
     # ── Stage 3: Semantic Search ───────────────────────────────────────────────
-    # visual_query → RemoteCLIP text embedding → FAISS Top-K retrieval
-    # location is passed as a hint only — geographic filtering is optional.
     candidate_response = semantic_search(
         visual_query=structured.visual_query,
         location=structured.location,
     )
-    # Propagate the same query_id across the entire pipeline.
     candidate_response.query_id = query_id
 
     logger.info(
@@ -128,14 +122,88 @@ async def run_query(body: QueryRequest) -> QueryPipelineResponse:
     if not candidate_response.candidates:
         raise NoCandidatesError()
 
-    # ── Response: expose all intermediate results for inspection ──────────────
-    # This multi-field response lets AI/ML components be debugged independently.
-    # In the next phase, the top candidate bbox will be validated and passed
-    # to analyze() for STAC + COG geospatial computation.
+    # ── Stage 4: Candidate Validation & Selection ─────────────────────────────
+    validation = validate_candidates(
+        candidates=candidate_response.candidates,
+        geographic_result=geographic_result,
+    )
+
+    selected_candidate = validation.selected_candidate
+    logger.info(
+        "CANDIDATES_VALIDATED query_id=%s status=%s selected_tile=%s reason=%r",
+        query_id,
+        validation.validation_status,
+        selected_candidate.tile_id if selected_candidate else "None",
+        validation.validation_reason,
+    )
+
+    # ── Stage 5 & 6: Geospatial Pipeline & Evidence Construction ─────────────
+    analysis_result: AnalysisResult | None = None
+    evidence: Evidence | None = None
+    explanation: str | None = None
+
+    if selected_candidate is not None:
+        try:
+            analysis_result = analyze(
+                bbox=selected_candidate.bbox,
+                analysis=structured.analysis,
+                start_date=structured.start_date,
+                end_date=structured.end_date,
+            )
+
+            scene_meta = analysis_result.scene
+            evidence = Evidence(
+                location=structured.location or (geographic_result.name if geographic_result else None),
+                bbox=analysis_result.bbox,
+                scene_id=scene_meta.scene_id if scene_meta else None,
+                acquisition_date=scene_meta.datetime if scene_meta else None,
+                analysis=analysis_result.analysis,
+                computed_values=analysis_result.metrics,
+                change_metrics=analysis_result.metrics.get("change_metrics", {}),
+                source="Sentinel-2 L2A via Planetary Computer STAC",
+            )
+
+            explanation = explain_evidence(evidence)
+
+        except (NoSatelliteDataError, GeoAnalysisError) as exc:
+            logger.warning("Geospatial analysis skipped/error: %s", exc)
+            analysis_result = AnalysisResult(
+                analysis=structured.analysis,
+                bbox=selected_candidate.bbox,
+                status="no_data" if isinstance(exc, NoSatelliteDataError) else "error",
+                message=str(exc),
+            )
+            evidence = Evidence(
+                location=structured.location or (geographic_result.name if geographic_result else None),
+                bbox=selected_candidate.bbox,
+                analysis=structured.analysis,
+                computed_values={},
+                change_metrics={},
+                source="Sentinel-2 L2A via Planetary Computer STAC",
+            )
+            explanation = explain_evidence(evidence)
+    else:
+        # No candidate passed spatial validation
+        loc_name = structured.location or "requested region"
+        explanation = (
+            f"No satellite tile imagery covering '{loc_name}' was found in the indexed dataset. "
+            f"Candidate validation status: {validation.validation_status}."
+        )
+
+    # ── Response: complete end-to-end inspectable response ────────────────────
     return QueryPipelineResponse(
         query_id=query_id,
         query=body.query,
         structured_query=structured,
         geographic_result=geographic_result,
         candidates=candidate_response.candidates,
+        selected_candidate=selected_candidate,
+        validation_status=validation.validation_status,
+        validation_reason=validation.validation_reason,
+        validation_details=[d.model_dump() for d in validation.details],
+        analysis_result=analysis_result,
+        evidence=evidence,
+        explanation=explanation,
     )
+
+
