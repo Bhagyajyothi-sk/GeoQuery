@@ -33,6 +33,8 @@ data/satellite_tiles/*
 !data/satellite_tiles/.gitkeep
 !data/satellite_tiles/metadata.json
 !data/satellite_tiles/README.md
+!data/satellite_tiles/evaluation_labels.json
+
 
 
 # IDE & OS files

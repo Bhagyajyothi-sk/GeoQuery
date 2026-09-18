@@ -32,5 +32,413 @@
       77.59925243814308,
       12.976070703134335
     ]
+  },
+  {
+    "tile_id": "bellandur_001",
+    "image_path": "data/satellite_tiles/bellandur_001.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.936508,
+    "center_lon": 77.664319,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.659666,
+      12.931945,
+      77.668971,
+      12.941072
+    ]
+  },
+  {
+    "tile_id": "hebbal_001",
+    "image_path": "data/satellite_tiles/hebbal_001.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 13.036023,
+    "center_lon": 77.587981,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.583328,
+      13.03146,
+      77.592635,
+      13.040586
+    ]
+  },
+  {
+    "tile_id": "sankey_001",
+    "image_path": "data/satellite_tiles/sankey_001.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 13.00652,
+    "center_lon": 77.57496,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.570308,
+      13.001957,
+      77.579613,
+      13.011082
+    ]
+  },
+  {
+    "tile_id": "hussain_sagar_001",
+    "image_path": "data/satellite_tiles/hussain_sagar_001.png",
+    "scene_id": "S2B_MSIL2A_20251213T051119_R019_T43QHV_20251213T071206",
+    "center_lat": 17.423961,
+    "center_lon": 78.473726,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      78.468941,
+      17.419367,
+      78.47851,
+      17.428554
+    ]
+  },
+  {
+    "tile_id": "urban_indiranagar",
+    "image_path": "data/satellite_tiles/urban_indiranagar.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.978486,
+    "center_lon": 77.640722,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.636069,
+      12.973922,
+      77.645376,
+      12.983049
+    ]
+  },
+  {
+    "tile_id": "urban_electronic_city",
+    "image_path": "data/satellite_tiles/urban_electronic_city.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.845218,
+    "center_lon": 77.66013,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.65548,
+      12.840655,
+      77.664781,
+      12.849781
+    ]
+  },
+  {
+    "tile_id": "urban_hitech_city",
+    "image_path": "data/satellite_tiles/urban_hitech_city.png",
+    "scene_id": "S2B_MSIL2A_20251213T051119_R019_T43QHV_20251213T071206",
+    "center_lat": 17.443585,
+    "center_lon": 78.37715,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      78.372367,
+      17.438993,
+      78.381934,
+      17.448176
+    ]
+  },
+  {
+    "tile_id": "urban_mumbai_bkc",
+    "image_path": "data/satellite_tiles/urban_mumbai_bkc.png",
+    "scene_id": "S2B_MSIL2A_20251013T053659_R005_T42QZG_20251013T090851",
+    "center_lat": 19.065764,
+    "center_lon": 72.868557,
+    "crs": "EPSG:32642",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      72.86371,
+      19.061156,
+      72.873403,
+      19.070372
+    ]
+  },
+  {
+    "tile_id": "veg_cubbon_park",
+    "image_path": "data/satellite_tiles/veg_cubbon_park.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.976347,
+    "center_lon": 77.59289,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.588237,
+      12.971785,
+      77.597542,
+      12.98091
+    ]
+  },
+  {
+    "tile_id": "veg_lalbagh",
+    "image_path": "data/satellite_tiles/veg_lalbagh.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.95077,
+    "center_lon": 77.584795,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.580143,
+      12.946208,
+      77.589447,
+      12.955333
+    ]
+  },
+  {
+    "tile_id": "veg_bannerghatta",
+    "image_path": "data/satellite_tiles/veg_bannerghatta.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.800062,
+    "center_lon": 77.57699,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.572342,
+      12.7955,
+      77.581639,
+      12.804623
+    ]
+  },
+  {
+    "tile_id": "veg_turahalli",
+    "image_path": "data/satellite_tiles/veg_turahalli.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.887205,
+    "center_lon": 77.525479,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.52083,
+      12.882643,
+      77.530129,
+      12.891766
+    ]
+  },
+  {
+    "tile_id": "veg_nandi_hills",
+    "image_path": "data/satellite_tiles/veg_nandi_hills.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 13.370289,
+    "center_lon": 77.683496,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.678833,
+      13.365724,
+      77.688158,
+      13.374854
+    ]
+  },
+  {
+    "tile_id": "agri_mandya_001",
+    "image_path": "data/satellite_tiles/agri_mandya_001.png",
+    "scene_id": "S2B_MSIL2A_20260525T051649_R062_T43PGP_20260525T090543",
+    "center_lat": 12.521864,
+    "center_lon": 76.895029,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      76.890396,
+      12.517313,
+      76.899661,
+      12.526416
+    ]
+  },
+  {
+    "tile_id": "agri_kolar_001",
+    "image_path": "data/satellite_tiles/agri_kolar_001.png",
+    "scene_id": "S2C_MSIL2A_20260407T050651_R019_T43PHQ_20260407T103956",
+    "center_lat": 13.136788,
+    "center_lon": 78.129198,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      78.124535,
+      13.132217,
+      78.133862,
+      13.141358
+    ]
+  },
+  {
+    "tile_id": "agri_tumakuru_001",
+    "image_path": "data/satellite_tiles/agri_tumakuru_001.png",
+    "scene_id": "S2B_MSIL2A_20260214T051819_R062_T43PGQ_20260214T092109",
+    "center_lat": 13.340917,
+    "center_lon": 77.100943,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.09629,
+      13.336361,
+      77.105596,
+      13.345474
+    ]
+  },
+  {
+    "tile_id": "agri_doddaballapur",
+    "image_path": "data/satellite_tiles/agri_doddaballapur.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 13.292517,
+    "center_lon": 77.542158,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.537499,
+      13.287954,
+      77.546817,
+      13.29708
+    ]
+  },
+  {
+    "tile_id": "barren_quarry_001",
+    "image_path": "data/satellite_tiles/barren_quarry_001.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 13.210048,
+    "center_lon": 77.629914,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.625256,
+      13.205484,
+      77.634573,
+      13.214612
+    ]
+  },
+  {
+    "tile_id": "barren_chitradurga",
+    "image_path": "data/satellite_tiles/barren_chitradurga.png",
+    "scene_id": "S2B_MSIL2A_20260214T051819_R062_T43PFR_20260214T092109",
+    "center_lat": 14.225067,
+    "center_lon": 76.397942,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      76.393281,
+      14.22052,
+      76.402603,
+      14.229613
+    ]
+  },
+  {
+    "tile_id": "barren_devanahalli",
+    "image_path": "data/satellite_tiles/barren_devanahalli.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 13.245053,
+    "center_lon": 77.711994,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.707334,
+      13.240488,
+      77.716654,
+      13.249618
+    ]
+  },
+  {
+    "tile_id": "barren_ramanagara",
+    "image_path": "data/satellite_tiles/barren_ramanagara.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.715049,
+    "center_lon": 77.280969,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.276327,
+      12.710491,
+      77.285611,
+      12.719606
+    ]
+  },
+  {
+    "tile_id": "mixed_iisc_campus",
+    "image_path": "data/satellite_tiles/mixed_iisc_campus.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 13.018421,
+    "center_lon": 77.568357,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.563704,
+      13.013858,
+      77.57301,
+      13.022983
+    ]
+  },
+  {
+    "tile_id": "mixed_jayanagar",
+    "image_path": "data/satellite_tiles/mixed_jayanagar.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.92504,
+    "center_lon": 77.582964,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.578313,
+      12.920478,
+      77.587615,
+      12.929603
+    ]
+  },
+  {
+    "tile_id": "mixed_koramangala",
+    "image_path": "data/satellite_tiles/mixed_koramangala.png",
+    "scene_id": "S2C_MSIL2A_20251208T051221_R019_T43PGQ_20251208T081319",
+    "center_lat": 12.935021,
+    "center_lon": 77.623962,
+    "crs": "EPSG:32643",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "bbox": [
+      77.61931,
+      12.930458,
+      77.628614,
+      12.939583
+    ]
   }
 ]
