@@ -1,0 +1,1 @@
+# GeoQueryAI — schemas package

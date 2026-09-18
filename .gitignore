@@ -1,0 +1,39 @@
+# Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# ML Models & Weights
+models/
+*.pt
+*.pth
+*.bin
+*.onnx
+*.safetensors
+
+# Vector Indexes & Large Data
+indexes/*.faiss
+indexes/*.index
+indexes/*.pkl
+data/satellite_tiles/*
+!data/satellite_tiles/.gitkeep
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

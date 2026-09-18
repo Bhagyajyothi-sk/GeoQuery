@@ -1,0 +1,1 @@
+# GeoQueryAI — AI service package

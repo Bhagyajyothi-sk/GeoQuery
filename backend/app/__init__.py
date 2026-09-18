@@ -1,0 +1,1 @@
+# GeoQueryAI — app package
