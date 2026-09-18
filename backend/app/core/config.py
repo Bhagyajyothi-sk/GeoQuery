@@ -5,12 +5,22 @@ Settings are loaded from environment variables (or a .env file).
 All values have sane defaults so the server starts without any configuration.
 """
 
+from pathlib import Path
+
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# This file lives at <project_root>/backend/app/core/config.py
+# parents: [0]=core, [1]=app, [2]=backend, [3]=project_root
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
+    # A .env is looked for in the project root, then backend/, then the current
+    # working directory, so the server behaves the same however it is launched.
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(_PROJECT_ROOT / ".env", _BACKEND_DIR / ".env", ".env"),
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
@@ -63,6 +73,25 @@ class Settings(BaseSettings):
     # Improves zero-shot recall at the cost of ~4× encoding time.
     # Set PROMPT_ENSEMBLE=true in .env to enable.
     prompt_ensemble: bool = False
+
+    # ── Validators ─────────────────────────────────────────────────────────────
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def _split_cors_origins(cls, value):
+        """
+        Accept CORS_ORIGINS as either a JSON array or a comma-separated string.
+
+        Without this, CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+        in a .env file fails to parse as JSON and the app refuses to start.
+        """
+        if isinstance(value, str):
+            text = value.strip()
+            if not text:
+                return ["*"]
+            if text.startswith("["):
+                return value  # leave JSON for pydantic to decode
+            return [origin.strip() for origin in text.split(",") if origin.strip()]
+        return value
 
 
 settings = Settings()

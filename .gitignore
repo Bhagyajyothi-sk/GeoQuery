@@ -40,3 +40,7 @@ data/satellite_tiles/*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Rendered map output from /api/maps/*
+backend/app/static/maps/*.png
+!backend/app/static/maps/.gitkeep

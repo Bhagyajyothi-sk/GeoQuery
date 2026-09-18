@@ -25,6 +25,7 @@ To run:
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import struct
@@ -38,6 +39,15 @@ import pytest
 os.environ.setdefault("MOCK_AI", "true")
 os.environ.setdefault("MOCK_SEARCH", "true")
 os.environ.setdefault("MOCK_GEO", "true")
+
+
+# faiss-cpu is an optional dependency (see requirements.txt). The FAISSStore
+# unit tests below exercise the real library, so they are skipped rather than
+# failed when it is not installed.
+faiss_required = pytest.mark.skipif(
+    importlib.util.find_spec("faiss") is None,
+    reason="faiss-cpu is not installed (optional dependency)",
+)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -73,6 +83,7 @@ def _make_faiss_index_bytes(dim: int = 512, n_vectors: int = 0) -> bytes:
 # 1. Unit — FAISSStore: missing index raises SearchServiceError
 # ─────────────────────────────────────────────────────────────────────────────
 
+@faiss_required
 class TestFAISSStoreErrors:
     def setup_method(self):
         """Reset singleton before each test."""
@@ -166,6 +177,7 @@ class TestFAISSStoreErrors:
 # 2. Unit — FAISSStore: successful search on a tiny in-memory index
 # ─────────────────────────────────────────────────────────────────────────────
 
+@faiss_required
 class TestFAISSStoreSearch:
     def setup_method(self):
         from app.services.search.faiss_store import FAISSStore

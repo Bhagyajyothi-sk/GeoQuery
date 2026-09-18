@@ -1,0 +1,67 @@
+{
+    "queries": [
+        {
+            "query": "a satellite image of a lake",
+            "category": "lake_water",
+            "relevant_tiles": [
+                "ulsoor_001",
+                "bellandur_001",
+                "hebbal_001",
+                "sankey_001",
+                "hussain_sagar_001"
+            ]
+        },
+        {
+            "query": "a dense urban area",
+            "category": "dense_urban",
+            "relevant_tiles": [
+                "urban_002",
+                "urban_indiranagar",
+                "urban_electronic_city",
+                "urban_hitech_city",
+                "urban_mumbai_bkc"
+            ]
+        },
+        {
+            "query": "green vegetation",
+            "category": "vegetation_park",
+            "relevant_tiles": [
+                "veg_cubbon_park",
+                "veg_lalbagh",
+                "veg_bannerghatta",
+                "veg_turahalli",
+                "veg_nandi_hills"
+            ]
+        },
+        {
+            "query": "agricultural land",
+            "category": "agricultural_land",
+            "relevant_tiles": [
+                "agri_mandya_001",
+                "agri_kolar_001",
+                "agri_tumakuru_001",
+                "agri_doddaballapur"
+            ]
+        },
+        {
+            "query": "open barren land",
+            "category": "open_barren_land",
+            "relevant_tiles": [
+                "barren_quarry_001",
+                "barren_chitradurga",
+                "barren_devanahalli",
+                "barren_ramanagara"
+            ]
+        },
+        {
+            "query": "a lake surrounded by an urban area",
+            "category": "mixed_lake_urban",
+            "relevant_tiles": [
+                "ulsoor_001",
+                "sankey_001",
+                "bellandur_001",
+                "hussain_sagar_001"
+            ]
+        }
+    ]
+}

@@ -13,12 +13,15 @@ The app is structured around three clean API groups:
 import logging
 from contextlib import asynccontextmanager
 
+from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.api.routes import query, search, analysis
+from app.api.routes import query, search, analysis, maps
 from app.core.errors import (
     AIServiceError,
     SearchServiceError,
@@ -129,6 +132,14 @@ API_PREFIX = "/api"
 app.include_router(query.router,    prefix=API_PREFIX, tags=["Pipeline"])
 app.include_router(search.router,   prefix=API_PREFIX, tags=["Semantic Search"])
 app.include_router(analysis.router, prefix=API_PREFIX, tags=["Geospatial Analysis"])
+app.include_router(maps.router,     prefix=API_PREFIX, tags=["Rendered Maps"])
+
+
+# ── Static map output ──────────────────────────────────────────────────────────
+# Rendered NDVI/NDWI PNGs written by the /api/maps/* endpoints are served here.
+MAPS_DIR = Path(__file__).resolve().parent / "static" / "maps"
+MAPS_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/maps", StaticFiles(directory=str(MAPS_DIR)), name="maps")
 
 
 # ── Health probe ───────────────────────────────────────────────────────────────
