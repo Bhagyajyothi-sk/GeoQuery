@@ -25,7 +25,6 @@ import logging
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-
 from app.schemas.query import QueryRequest, QueryPipelineResponse
 from app.schemas.analysis import AnalysisResult, Evidence
 from app.services.ai.interface import parse_query, explain_evidence

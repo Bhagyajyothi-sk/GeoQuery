@@ -2,12 +2,11 @@ from typing import List, Dict, Any, Optional, Union
 from pystac_client import Client
 import planetary_computer
 import numpy as np
+from app.core.config import settings
 from app.services.geo.raster_service import (
     read_geometry_from_cog,
     normalize_geometry
 )
-
-STAC_URL = "https://planetarycomputer.microsoft.com/api/stac/v1"
 
 # Sentinel-2 SCL classes considered invalid (cloud, shadow, defective)
 INVALID_SCL_CLASSES = {
@@ -26,7 +25,7 @@ def search_sentinel_scenes(
     longitude: Optional[float] = None,
     start_date: str = "",
     end_date: str = "",
-    max_cloud_cover: float = 20.0,
+    max_cloud_cover: float = None,
     buffer: float = 0.05,
     aoi: Optional[Union[Dict[str, Any], List[float]]] = None,
     limit: int = 10
@@ -35,16 +34,16 @@ def search_sentinel_scenes(
     Search Sentinel-2 satellite imagery metadata using Microsoft's Planetary Computer STAC API.
     Supports search by coordinates (with buffer), bounding box, or GeoJSON Polygon.
     """
-    catalog = Client.open(STAC_URL)
-    search_kwargs = {
-        "collections": ["sentinel-2-l2a"],
-        "datetime": f"{start_date}/{end_date}",
-        "query": {
-            "eo:cloud_cover": {
-                "lt": max_cloud_cover
-            }
-        }
+    if max_cloud_cover is None:
+        max_cloud_cover = settings.stac_max_cloud_cover
+
+    catalog = Client.open(settings.stac_url)
+    search_kwargs: Dict[str, Any] = {
+        "collections": [settings.stac_collection],
+        "query": {"eo:cloud_cover": {"lt": max_cloud_cover}},
     }
+    if start_date or end_date:
+        search_kwargs["datetime"] = f"{start_date or '..'}/{end_date or '..'}"
 
     if aoi is not None:
         normalized = normalize_geometry(aoi)
@@ -113,16 +112,13 @@ def get_best_sentinel_scene(
         ]
 
     normalized = normalize_geometry(target_aoi)
-    catalog = Client.open(STAC_URL)
-    search_kwargs = {
-        "collections": ["sentinel-2-l2a"],
-        "datetime": f"{start_date}/{end_date}",
-        "query": {
-            "eo:cloud_cover": {
-                "lt": max_cloud_cover
-            }
-        }
+    catalog = Client.open(settings.stac_url)
+    search_kwargs: Dict[str, Any] = {
+        "collections": [settings.stac_collection],
+        "query": {"eo:cloud_cover": {"lt": max_cloud_cover}},
     }
+    if start_date or end_date:
+        search_kwargs["datetime"] = f"{start_date or '..'}/{end_date or '..'}"
 
     if normalized.get("type") in ("Polygon", "MultiPolygon"):
         search_kwargs["intersects"] = normalized

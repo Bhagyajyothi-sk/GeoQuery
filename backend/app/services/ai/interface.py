@@ -90,7 +90,7 @@ def parse_query(text: str) -> StructuredQuery:
         import google.generativeai as genai
 
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-3.6-flash")
 
         system_prompt = (
             "You are a geospatial query parser for GeoQueryAI.\n"
@@ -179,7 +179,7 @@ def explain_evidence(evidence: Union[Evidence, dict[str, Any]]) -> str:
         import google.generativeai as genai
 
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-3.6-flash")
 
         system_prompt = (
             "You are a scientific geospatial assistant for GeoQueryAI.\n"
