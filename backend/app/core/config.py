@@ -53,8 +53,16 @@ class Settings(BaseSettings):
     # AI/ML plug-in keys (populated by the AI/ML engineer)
     # ──────────────────────────────────────────────────────────────────────────
     gemini_api_key: str = ""           # ← Gemini query parser
-    remoteclip_model_path: str = ""    # ← RemoteCLIP weights path
-    faiss_index_path: str = ""         # ← FAISS index file path
+
+    # RemoteCLIP + FAISS paths (relative to project root)
+    remoteclip_model_path: str = "models/RemoteCLIP-ViT-B-32.pt"  # ← RemoteCLIP weights
+    faiss_index_path: str = "indexes/satellite.index"             # ← FAISS index
+    tile_metadata_path: str = "indexes/tile_metadata.json"        # ← FAISS ↔ tile mapping
+
+    # Prompt ensemble — encode multiple phrasings of the query, then average.
+    # Improves zero-shot recall at the cost of ~4× encoding time.
+    # Set PROMPT_ENSEMBLE=true in .env to enable.
+    prompt_ensemble: bool = False
 
 
 settings = Settings()

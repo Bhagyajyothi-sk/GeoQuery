@@ -71,21 +71,21 @@ def semantic_search(
     ┌──────────────────────────────────────────────────────────────────────┐
     │  MOCK MODE  (MOCK_SEARCH=true, the default)                          │
     │  Returns deterministic Bengaluru-area tiles for development.         │
-    │  Set MOCK_SEARCH=false and implement the real block below.           │
+    │  Set MOCK_SEARCH=false and build the FAISS index to enable real mode.│
     └──────────────────────────────────────────────────────────────────────┘
 
-    RemoteCLIP + FAISS integration guide:
-      1. Load RemoteCLIP model at startup (not per-call!) via lifespan hook in main.py.
-      2. Encode visual_query:  embedding = remoteclip_model.encode_text(visual_query)
-      3. Search FAISS index:   distances, indices = faiss_index.search(embedding, top_k)
-      4. Map indices → tile metadata (tile_id, bbox) from your tile registry.
-      5. Optionally filter results by location bbox from the geocoding stage.
-      6. Return CandidateResponse.
+    Real mode pipeline:
+      1. Encode visual_query via RemoteCLIP text encoder
+         (optionally using prompt ensemble if PROMPT_ENSEMBLE=true).
+      2. Search FAISS index for top_k nearest tile embeddings.
+      3. Map FAISS positions → tile metadata (tile_id, bbox).
+      4. (Optional) location is available for post-hoc filtering if needed.
+      5. Return CandidateResponse.
 
     Args:
-        visual_query: RemoteCLIP text embedding input. Comes from StructuredQuery.visual_query.
-        location:     Optional location hint for geographic pre-filtering. Never used as
-                      raw coordinates — it is a geocoded name only.
+        visual_query: RemoteCLIP text embedding input (from StructuredQuery.visual_query).
+        location:     Optional location hint. Available for geographic filtering;
+                      never used as raw coordinates in geospatial analysis.
         top_k:        Maximum number of candidates to return.
 
     Returns:
@@ -121,44 +121,65 @@ def semantic_search(
         # ── END MOCK ───────────────────────────────────────────────────────────
 
     # ═══════════════════════════════════════════════════════════════════════════
-    #  REAL IMPLEMENTATION — insert your RemoteCLIP + FAISS code here
+    #  REAL IMPLEMENTATION — RemoteCLIP + FAISS
     # ═══════════════════════════════════════════════════════════════════════════
     #
-    # Prerequisites (set these up in the lifespan hook in main.py):
-    #   remoteclip_model  — loaded RemoteCLIP model instance
-    #   faiss_index       — loaded faiss.Index instance
-    #   tile_db           — dict/list mapping FAISS index position → tile metadata
+    # Pipeline:
+    #   text → RemoteCLIPEncoder → (1, 512) normalized vector
+    #        → FAISSStore.search(top_k) → [{tile_id, bbox, score}, ...]
+    #        → SemanticCandidate list → CandidateResponse
     #
-    # try:
-    #     embedding = remoteclip_model.encode_text(visual_query)          # step 2
-    #     distances, indices = faiss_index.search(embedding, top_k)       # step 3
-    #     candidates = [
-    #         SemanticCandidate(
-    #             tile_id=tile_db[idx]["tile_id"],
-    #             bbox=tile_db[idx]["bbox"],
-    #             score=float(distances[0][rank]),   # cosine similarity in [0, 1]
-    #         )
-    #         for rank, idx in enumerate(indices[0])
-    #         if idx != -1   # FAISS returns -1 for unfilled slots
-    #     ]
-    #     result = CandidateResponse(
-    #         query_id=str(uuid.uuid4()),
-    #         visual_query=visual_query,
-    #         location=location,
-    #         candidates=candidates,
-    #     )
-    #     logger.info(
-    #         "CANDIDATES_RETRIEVED count=%d top_score=%.3f",
-    #         len(result.candidates),
-    #         result.candidates[0].score if result.candidates else 0.0,
-    #     )
-    #     return result
-    # except Exception as exc:
-    #     raise SearchServiceError(f"Semantic search failed: {exc}") from exc
-    #
+    # location is available here for optional post-retrieval geographic
+    # filtering, but is NOT passed to FAISS (FAISS is text-only retrieval).
     # ═══════════════════════════════════════════════════════════════════════════
 
-    raise SearchServiceError(
-        "RemoteCLIP + FAISS implementation not yet connected. "
-        "Set MOCK_SEARCH=true to use mock mode, or plug in your implementation above."
-    )
+    try:
+        from app.services.search.remoteclip import RemoteCLIPEncoder
+        from app.services.search.faiss_store import FAISSStore
+
+        encoder = RemoteCLIPEncoder.instance()
+        store = FAISSStore.instance()
+
+        # ── Encode query ───────────────────────────────────────────────────────
+        if settings.prompt_ensemble:
+            # Average over multiple prompt phrasings for better zero-shot recall
+            query_vector = encoder.encode_text_ensemble(visual_query)  # (1, 512)
+            logger.debug("SEMANTIC_SEARCH using prompt ensemble")
+        else:
+            query_vector = encoder.encode_text([visual_query])         # (1, 512)
+
+        # ── FAISS retrieval ────────────────────────────────────────────────────
+        raw_candidates = store.search(query_vector, top_k=top_k)
+
+        # ── Build response ─────────────────────────────────────────────────────
+        candidates = [
+            SemanticCandidate(
+                tile_id=c["tile_id"],
+                bbox=c["bbox"],
+                score=float(c["score"]),
+            )
+            for c in raw_candidates
+        ]
+
+        result = CandidateResponse(
+            query_id=str(uuid.uuid4()),
+            visual_query=visual_query,
+            location=location,
+            candidates=candidates,
+        )
+
+        logger.info(
+            "CANDIDATES_RETRIEVED count=%d top_score=%.3f",
+            len(result.candidates),
+            result.candidates[0].score if result.candidates else 0.0,
+        )
+        return result
+
+    except SearchServiceError:
+        # Re-raise app-level errors as-is (they have correct HTTP status codes)
+        raise
+    except Exception as exc:
+        raise SearchServiceError(
+            f"Semantic search failed unexpectedly: {exc}"
+        ) from exc
+    # ═══════════════════════════════════════════════════════════════════════════
