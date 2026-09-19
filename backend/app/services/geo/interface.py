@@ -46,11 +46,16 @@ logger = logging.getLogger("geoquery.geo")
 # Analyses this interface knows how to run.
 SUPPORTED_ANALYSES = (
     "discovery",
+    "road_discovery",
+    "water_body_discovery",
+    "agricultural_area_discovery",
+    "vegetation_health",
     "ndvi",
     "ndwi",
     "water_extent",
     "change",
     "water_extent_change",
+    "clarification_needed",
 )
 
 # NDWI values above this threshold are classified as open water.
@@ -145,10 +150,10 @@ def _mock_result(
 
     metrics: Dict[str, Any] = {}
 
-    if analysis == "discovery":
+    if analysis in ("discovery", "road_discovery", "water_body_discovery", "agricultural_area_discovery", "clarification_needed"):
         metrics = {"aoi_area_km2": area_km2}
 
-    elif analysis == "ndvi":
+    elif analysis in ("ndvi", "vegetation_health"):
         mean_ndvi = round(0.15 + seed * 0.55, 4)
         metrics = {
             "mean_ndvi": mean_ndvi,
@@ -406,12 +411,12 @@ def analyze(
         aoi = list(bbox)
 
         # Single-date analyses -------------------------------------------------
-        if analysis in ("discovery", "ndvi", "ndwi", "water_extent"):
+        if analysis in ("discovery", "road_discovery", "water_body_discovery", "agricultural_area_discovery", "clarification_needed", "ndvi", "vegetation_health", "ndwi", "water_extent"):
             scene = _find_scene(aoi, start, end)
 
-            if analysis == "discovery":
+            if analysis in ("discovery", "road_discovery", "water_body_discovery", "agricultural_area_discovery", "clarification_needed"):
                 metrics: Dict[str, Any] = {"aoi_area_km2": _bbox_area_km2(aoi)}
-            elif analysis == "ndvi":
+            elif analysis in ("ndvi", "vegetation_health"):
                 metrics = _run_ndvi(aoi, scene)
             elif analysis == "ndwi":
                 ndwi_result = _run_ndwi(aoi, scene)

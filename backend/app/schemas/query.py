@@ -44,11 +44,16 @@ class StructuredQuery(BaseModel):
     )
     analysis: Literal[
         "discovery",
+        "road_discovery",
+        "water_body_discovery",
+        "agricultural_area_discovery",
+        "vegetation_health",
         "ndvi",
         "ndwi",
         "water_extent",
         "change",
         "water_extent_change",
+        "clarification_needed",
     ] = Field(
         ...,
         description="Geospatial analysis type to perform on the retrieved scene.",

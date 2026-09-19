@@ -38,6 +38,11 @@ class SemanticCandidate(BaseModel):
         description="Cosine similarity score from RemoteCLIP embedding comparison.",
         examples=[0.87],
     )
+    image_url: str | None = Field(
+        default=None,
+        description="Path or URL to the tile image.",
+        examples=["/tiles/tile_001.png"],
+    )
 
 
 class CandidateResponse(BaseModel):
