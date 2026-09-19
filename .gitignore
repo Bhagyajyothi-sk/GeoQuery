@@ -28,6 +28,7 @@ models/
 # Vector Indexes & Large Data
 indexes/*.faiss
 indexes/*.index
+!indexes/satellite.index
 indexes/*.pkl
 data/satellite_tiles/*
 !data/satellite_tiles/.gitkeep
