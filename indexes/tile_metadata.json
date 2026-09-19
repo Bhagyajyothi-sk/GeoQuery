@@ -1,19 +1,363 @@
 [
   {
+    "tile_id": "agri_doddaballapur",
+    "image_path": "data/satellite_tiles/agri_doddaballapur.png",
+    "scene_id": null,
+    "center_lat": 13.2925,
+    "center_lon": 77.5422,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "agricultural_land",
+    "description": "Doddaballapur agricultural fields",
+    "bbox": [
+      77.5375848,
+      13.28800844,
+      77.5468152,
+      13.29699156
+    ]
+  },
+  {
+    "tile_id": "agri_kolar_001",
+    "image_path": "data/satellite_tiles/agri_kolar_001.png",
+    "scene_id": null,
+    "center_lat": 13.1367,
+    "center_lon": 78.1292,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "agricultural_land",
+    "description": "Kolar farmland",
+    "bbox": [
+      78.12458774,
+      13.13220844,
+      78.13381226,
+      13.14119156
+    ]
+  },
+  {
+    "tile_id": "agri_mandya_001",
+    "image_path": "data/satellite_tiles/agri_mandya_001.png",
+    "scene_id": null,
+    "center_lat": 12.5218,
+    "center_lon": 76.8951,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "agricultural_land",
+    "description": "Mandya irrigated fields",
+    "bbox": [
+      76.890499,
+      12.51730844,
+      76.899701,
+      12.52629156
+    ]
+  },
+  {
+    "tile_id": "agri_tumakuru_001",
+    "image_path": "data/satellite_tiles/agri_tumakuru_001.png",
+    "scene_id": null,
+    "center_lat": 13.3409,
+    "center_lon": 77.101,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "agricultural_land",
+    "description": "Tumakuru crop fields",
+    "bbox": [
+      77.09638388,
+      13.33640844,
+      77.10561612,
+      13.34539156
+    ]
+  },
+  {
+    "tile_id": "barren_chitradurga",
+    "image_path": "data/satellite_tiles/barren_chitradurga.png",
+    "scene_id": null,
+    "center_lat": 14.225,
+    "center_lon": 76.398,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "open_barren_land",
+    "description": "Chitradurga dry barren terrain",
+    "bbox": [
+      76.39336637,
+      14.22050844,
+      76.40263363,
+      14.22949156
+    ]
+  },
+  {
+    "tile_id": "barren_devanahalli",
+    "image_path": "data/satellite_tiles/barren_devanahalli.png",
+    "scene_id": null,
+    "center_lat": 13.245,
+    "center_lon": 77.712,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "open_barren_land",
+    "description": "Devanahalli open cleared ground",
+    "bbox": [
+      77.7073857,
+      13.24050844,
+      77.7166143,
+      13.24949156
+    ]
+  },
+  {
+    "tile_id": "barren_quarry_001",
+    "image_path": "data/satellite_tiles/barren_quarry_001.png",
+    "scene_id": null,
+    "center_lat": 13.21,
+    "center_lon": 77.63,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "open_barren_land",
+    "description": "Granite quarry, north Bengaluru",
+    "bbox": [
+      77.62538636,
+      13.20550844,
+      77.63461364,
+      13.21449156
+    ]
+  },
+  {
+    "tile_id": "barren_ramanagara",
+    "image_path": "data/satellite_tiles/barren_ramanagara.png",
+    "scene_id": null,
+    "center_lat": 12.715,
+    "center_lon": 77.281,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "open_barren_land",
+    "description": "Ramanagara rocky barren hill",
+    "bbox": [
+      77.27639553,
+      12.71050844,
+      77.28560447,
+      12.71949156
+    ]
+  },
+  {
+    "tile_id": "bellandur_001",
+    "image_path": "data/satellite_tiles/bellandur_001.png",
+    "scene_id": null,
+    "center_lat": 12.9365,
+    "center_lon": 77.6644,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "lake_water",
+    "description": "Bellandur Lake, Bengaluru",
+    "bbox": [
+      77.65979147,
+      12.93200844,
+      77.66900853,
+      12.94099156
+    ]
+  },
+  {
+    "tile_id": "blr_001",
+    "image_path": "data/satellite_tiles/blr_001.png",
+    "scene_id": null,
+    "center_lat": 12.9716,
+    "center_lon": 77.5946,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "dense_urban",
+    "description": "Bengaluru city overview",
+    "bbox": [
+      77.58999082,
+      12.96710844,
+      77.59920918,
+      12.97609156
+    ]
+  },
+  {
+    "tile_id": "hebbal_001",
+    "image_path": "data/satellite_tiles/hebbal_001.png",
+    "scene_id": null,
+    "center_lat": 13.036,
+    "center_lon": 77.588,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "lake_water",
+    "description": "Hebbal Lake, Bengaluru",
+    "bbox": [
+      77.58338963,
+      13.03150844,
+      77.59261037,
+      13.04049156
+    ]
+  },
+  {
+    "tile_id": "hussain_sagar_001",
+    "image_path": "data/satellite_tiles/hussain_sagar_001.png",
+    "scene_id": null,
+    "center_lat": 17.4239,
+    "center_lon": 78.4738,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "lake_water",
+    "description": "Hussain Sagar, Hyderabad",
+    "bbox": [
+      78.46909244,
+      17.41940844,
+      78.47850756,
+      17.42839156
+    ]
+  },
+  {
+    "tile_id": "majestic_001",
+    "image_path": "data/satellite_tiles/majestic_001.png",
+    "scene_id": null,
+    "center_lat": 12.9766,
+    "center_lon": 77.5713,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "dense_urban",
+    "description": "Majestic / Krantivira Station area",
+    "bbox": [
+      77.56669073,
+      12.97210844,
+      77.57590927,
+      12.98109156
+    ]
+  },
+  {
+    "tile_id": "mixed_iisc_campus",
+    "image_path": "data/satellite_tiles/mixed_iisc_campus.png",
+    "scene_id": null,
+    "center_lat": 13.0184,
+    "center_lon": 77.5684,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "mixed_urban_vegetation",
+    "description": "IISc Campus, Bengaluru",
+    "bbox": [
+      77.56378996,
+      13.01390844,
+      77.57301004,
+      13.02289156
+    ]
+  },
+  {
+    "tile_id": "mixed_jayanagar",
+    "image_path": "data/satellite_tiles/mixed_jayanagar.png",
+    "scene_id": null,
+    "center_lat": 12.925,
+    "center_lon": 77.583,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "mixed_urban_vegetation",
+    "description": "Jayanagar, Bengaluru",
+    "bbox": [
+      77.57839169,
+      12.92050844,
+      77.58760831,
+      12.92949156
+    ]
+  },
+  {
+    "tile_id": "mixed_koramangala",
+    "image_path": "data/satellite_tiles/mixed_koramangala.png",
+    "scene_id": null,
+    "center_lat": 12.935,
+    "center_lon": 77.624,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "mixed_urban_vegetation",
+    "description": "Koramangala, Bengaluru",
+    "bbox": [
+      77.6193915,
+      12.93050844,
+      77.6286085,
+      12.93949156
+    ]
+  },
+  {
+    "tile_id": "sankey_001",
+    "image_path": "data/satellite_tiles/sankey_001.png",
+    "scene_id": null,
+    "center_lat": 13.0065,
+    "center_lon": 77.575,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "lake_water",
+    "description": "Sankey Tank, Bengaluru",
+    "bbox": [
+      77.57039018,
+      13.00200844,
+      77.57960982,
+      13.01099156
+    ]
+  },
+  {
     "tile_id": "ulsoor_001",
     "image_path": "data/satellite_tiles/ulsoor_001.png",
     "scene_id": "S2C_MSIL2A_20260914T050651_R019_T43PGQ_20260914T100610",
     "center_lat": 12.981,
     "center_lon": 77.5946,
-    "crs": "EPSG:32643",
+    "crs": "EPSG:4326",
     "pixel_size_m": 10,
     "width_px": 100,
     "height_px": 100,
+    "category": "lake_water",
+    "description": "Ulsoor Lake, Bengaluru",
     "bbox": [
-      77.58994751963952,
-      12.976529216635141,
-      77.59925264634654,
-      12.985470667160499
+      77.58999065,
+      12.97650844,
+      77.59920935,
+      12.98549156
+    ]
+  },
+  {
+    "tile_id": "urban_001",
+    "image_path": "data/satellite_tiles/urban_001.png",
+    "scene_id": "S2C_MSIL2A_20260914T050651_R019_T43PGQ_20260914T100610",
+    "center_lat": 12.9716,
+    "center_lon": 77.5946,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "dense_urban",
+    "description": "Central Bengaluru urban",
+    "bbox": [
+      77.58999082,
+      12.96710844,
+      77.59920918,
+      12.97609156
     ]
   },
   {
@@ -22,15 +366,188 @@
     "scene_id": "S2C_MSIL2A_20260616T050651_R019_T43PGQ_20260616T100816",
     "center_lat": 12.9716,
     "center_lon": 77.5946,
-    "crs": "EPSG:32643",
+    "crs": "EPSG:4326",
     "pixel_size_m": 10,
     "width_px": 100,
     "height_px": 100,
+    "category": "dense_urban",
+    "description": "Central Bengaluru urban (June)",
     "bbox": [
-      77.58994772771239,
-      12.967129180724577,
-      77.59925243814308,
-      12.976070703134335
+      77.58999082,
+      12.96710844,
+      77.59920918,
+      12.97609156
+    ]
+  },
+  {
+    "tile_id": "urban_electronic_city",
+    "image_path": "data/satellite_tiles/urban_electronic_city.png",
+    "scene_id": null,
+    "center_lat": 12.8452,
+    "center_lon": 77.6602,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "dense_urban",
+    "description": "Electronic City, Bengaluru",
+    "bbox": [
+      77.65559315,
+      12.84070844,
+      77.66480685,
+      12.84969156
+    ]
+  },
+  {
+    "tile_id": "urban_hitech_city",
+    "image_path": "data/satellite_tiles/urban_hitech_city.png",
+    "scene_id": null,
+    "center_lat": 17.4435,
+    "center_lon": 78.3772,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "dense_urban",
+    "description": "HITEC City, Hyderabad",
+    "bbox": [
+      78.37249193,
+      17.43900844,
+      78.38190807,
+      17.44799156
+    ]
+  },
+  {
+    "tile_id": "urban_indiranagar",
+    "image_path": "data/satellite_tiles/urban_indiranagar.png",
+    "scene_id": null,
+    "center_lat": 12.9784,
+    "center_lon": 77.6408,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "dense_urban",
+    "description": "Indiranagar, Bengaluru",
+    "bbox": [
+      77.6361907,
+      12.97390844,
+      77.6454093,
+      12.98289156
+    ]
+  },
+  {
+    "tile_id": "urban_mumbai_bkc",
+    "image_path": "data/satellite_tiles/urban_mumbai_bkc.png",
+    "scene_id": null,
+    "center_lat": 19.0657,
+    "center_lon": 72.8686,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "dense_urban",
+    "description": "Bandra Kurla Complex, Mumbai",
+    "bbox": [
+      72.86384776,
+      19.06120844,
+      72.87335224,
+      19.07019156
+    ]
+  },
+  {
+    "tile_id": "veg_bannerghatta",
+    "image_path": "data/satellite_tiles/veg_bannerghatta.png",
+    "scene_id": null,
+    "center_lat": 12.8,
+    "center_lon": 77.577,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "vegetation_park",
+    "description": "Bannerghatta National Park",
+    "bbox": [
+      77.57239398,
+      12.79550844,
+      77.58160602,
+      12.80449156
+    ]
+  },
+  {
+    "tile_id": "veg_cubbon_park",
+    "image_path": "data/satellite_tiles/veg_cubbon_park.png",
+    "scene_id": null,
+    "center_lat": 12.9763,
+    "center_lon": 77.5929,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "vegetation_park",
+    "description": "Cubbon Park, Bengaluru",
+    "bbox": [
+      77.58829074,
+      12.97180844,
+      77.59750926,
+      12.98079156
+    ]
+  },
+  {
+    "tile_id": "veg_lalbagh",
+    "image_path": "data/satellite_tiles/veg_lalbagh.png",
+    "scene_id": null,
+    "center_lat": 12.9507,
+    "center_lon": 77.5848,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "vegetation_park",
+    "description": "Lalbagh Botanical Garden, Bengaluru",
+    "bbox": [
+      77.58019121,
+      12.94620844,
+      77.58940879,
+      12.95519156
+    ]
+  },
+  {
+    "tile_id": "veg_nandi_hills",
+    "image_path": "data/satellite_tiles/veg_nandi_hills.png",
+    "scene_id": null,
+    "center_lat": 13.3702,
+    "center_lon": 77.6835,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "vegetation_park",
+    "description": "Nandi Hills Forested Slopes",
+    "bbox": [
+      77.67888331,
+      13.36570844,
+      77.68811669,
+      13.37469156
+    ]
+  },
+  {
+    "tile_id": "veg_turahalli",
+    "image_path": "data/satellite_tiles/veg_turahalli.png",
+    "scene_id": null,
+    "center_lat": 12.8872,
+    "center_lon": 77.5255,
+    "crs": "EPSG:4326",
+    "pixel_size_m": 10,
+    "width_px": 100,
+    "height_px": 100,
+    "category": "vegetation_park",
+    "description": "Turahalli Reserve Forest",
+    "bbox": [
+      77.52089238,
+      12.88270844,
+      77.53010762,
+      12.89169156
     ]
   }
 ]
