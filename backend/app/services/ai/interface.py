@@ -66,14 +66,49 @@ def parse_query(text: str) -> StructuredQuery:
     Raises:
         AIServiceError: If the Gemini API is unavailable or returns invalid JSON.
     """
-    if settings.mock_ai:
-        result = StructuredQuery(
-            visual_query="large water body",
-            location="Bengaluru",
-            analysis="water_extent",
-            start_date="2025-09-01",
-            end_date="2026-09-01",
+    def heuristic_parse(q: str) -> StructuredQuery:
+        lower = q.lower()
+        analysis = "clarification_needed"
+        visual_query = q
+
+        if "ndvi" in lower or "vegetation" in lower or "forest" in lower or "green" in lower:
+            analysis = "vegetation_health"
+            visual_query = "green vegetation"
+        elif "ndwi" in lower:
+            analysis = "ndwi"
+            visual_query = "water body"
+        elif "water" in lower or "lake" in lower or "reservoir" in lower:
+            if "change" in lower or "compare" in lower:
+                analysis = "water_extent_change"
+            else:
+                analysis = "water_body_discovery"
+            visual_query = "water body"
+        elif "agricultur" in lower or "farm" in lower:
+            analysis = "agricultural_area_discovery"
+            visual_query = "agricultural land"
+        elif "change" in lower:
+            analysis = "change"
+            visual_query = "land cover change"
+        elif "road" in lower or "building" in lower or "infrastructure" in lower or "urban" in lower or "city" in lower:
+            analysis = "road_discovery"
+            visual_query = "urban infrastructure or roads"
+
+        location = None
+        for loc in ["Bengaluru", "Bangalore", "Cauvery", "Chennai", "Mumbai", "Delhi", "Hyderabad", "Ulsoor", "Mandya"]:
+            if loc.lower() in lower:
+                location = "Bengaluru" if loc.lower() in ["bengaluru", "bangalore", "ulsoor"] else loc
+                break
+
+        return StructuredQuery(
+            visual_query=visual_query,
+            location=location,
+            analysis=analysis,
+            start_date=None,
+            end_date=None,
         )
+
+    if settings.mock_ai:
+        result = heuristic_parse(text)
         logger.info(
             "QUERY_PARSED [MOCK] visual_query=%r location=%r analysis=%s",
             result.visual_query,
@@ -99,14 +134,14 @@ def parse_query(text: str) -> StructuredQuery:
             "{\n"
             '  "visual_query": "visual description for satellite image search (e.g. large water body, dense forest)",\n'
             '  "location": "place name string or null",\n'
-            '  "analysis": "one of: discovery | ndvi | ndwi | water_extent | change | water_extent_change",\n'
+            '  "analysis": "one of: discovery | road_discovery | water_body_discovery | agricultural_area_discovery | vegetation_health | ndvi | ndwi | water_extent | change | water_extent_change | clarification_needed",\n'
             '  "start_date": "YYYY-MM-DD or null",\n'
             '  "end_date": "YYYY-MM-DD or null"\n'
             "}\n\n"
             "Rules:\n"
             "- visual_query must be a visual description suitable for RemoteCLIP image matching (no coordinates).\n"
             "- location must be a free-text place name string only, or null if unstated.\n"
-            "- analysis MUST strictly be one of: 'discovery', 'ndvi', 'ndwi', 'water_extent', 'change', 'water_extent_change'. If unspecified, default to 'water_extent'."
+            "- analysis MUST strictly be one of: 'discovery', 'road_discovery', 'water_body_discovery', 'agricultural_area_discovery', 'vegetation_health', 'ndvi', 'ndwi', 'water_extent', 'change', 'water_extent_change'. If intent is ambiguous, use 'clarification_needed'."
         )
 
         response = model.generate_content(f"{system_prompt}\n\nUser query: {text}")
@@ -130,36 +165,7 @@ def parse_query(text: str) -> StructuredQuery:
         return result
     except Exception as exc:
         logger.warning("Gemini query parsing API call failed (%s); using heuristic fallback parser", exc)
-        lower = text.lower()
-        analysis = "water_extent"
-        visual_query = text
-
-        if "ndvi" in lower or "vegetation" in lower or "forest" in lower or "green" in lower:
-            analysis = "ndvi"
-            visual_query = "green vegetation"
-        elif "ndwi" in lower:
-            analysis = "ndwi"
-            visual_query = "water body"
-        elif "water" in lower or "lake" in lower or "reservoir" in lower:
-            analysis = "water_extent"
-            visual_query = "water body"
-        elif "change" in lower:
-            analysis = "change"
-            visual_query = "land cover change"
-
-        location = None
-        for loc in ["Bengaluru", "Bangalore", "Cauvery", "Chennai", "Mumbai", "Delhi", "Hyderabad", "Ulsoor"]:
-            if loc.lower() in lower:
-                location = "Bengaluru" if loc.lower() in ["bengaluru", "bangalore", "ulsoor"] else loc
-                break
-
-        return StructuredQuery(
-            visual_query=visual_query,
-            location=location,
-            analysis=analysis,
-            start_date=None,
-            end_date=None,
-        )
+        return heuristic_parse(text)
 
 
 def explain_evidence(evidence: Union[Evidence, dict[str, Any]]) -> str:

@@ -113,9 +113,13 @@ app = FastAPI(
 )
 
 # ── CORS ───────────────────────────────────────────────────────────────────────
+origins = settings.cors_origins.copy()
+if settings.frontend_url and settings.frontend_url not in origins:
+    origins.append(settings.frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -147,8 +151,13 @@ MAPS_DIR = Path(__file__).resolve().parent / "static" / "maps"
 MAPS_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/maps", StaticFiles(directory=str(MAPS_DIR)), name="maps")
 
+# ── Static tiles output ────────────────────────────────────────────────────────
+# Actual satellite tile images from data/satellite_tiles/
+TILES_DIR = _BACKEND_DIR.parent / "data" / "satellite_tiles"
+app.mount("/tiles", StaticFiles(directory=str(TILES_DIR)), name="tiles")
+
 
 # ── Health probe ───────────────────────────────────────────────────────────────
 @app.get("/health", tags=["Health"], summary="Liveness probe")
 async def health() -> dict:
-    return {"status": "ok", "app": settings.app_name, "version": settings.app_version}
+    return {"status": "ok", "service": "GeoQuery AI", "version": settings.app_version}

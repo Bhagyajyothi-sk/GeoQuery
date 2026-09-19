@@ -62,3 +62,4 @@ print("SCENE:", item.id)
 print("CREATED: data/satellite_tiles/urban_002.png")
 print("SHAPE:", rgb.shape)
 print("CENTER PIXEL:", row, col)
+

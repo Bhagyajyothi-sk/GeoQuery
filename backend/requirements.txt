@@ -39,11 +39,11 @@ httpx>=0.27.0          # required by fastapi.testclient
 #
 #   MOCK_AI=false      → pip install google-generativeai
 #   MOCK_SEARCH=false  → pip install torch open-clip-torch faiss-cpu
-#
-# google-generativeai>=0.7.0    # Gemini query parser + grounded explanation
-# torch>=2.0.0                  # RemoteCLIP backbone
-# open-clip-torch>=2.24.0       # ViT-B-32 architecture + tokenizer
-# faiss-cpu>=1.7.4              # vector index
+
+google-generativeai>=0.7.0    # Gemini query parser + grounded explanation
+torch>=2.0.0                  # RemoteCLIP backbone
+open-clip-torch>=2.24.0       # ViT-B-32 architecture + tokenizer
+faiss-cpu>=1.7.4              # vector index
 #
 # The RemoteCLIP *weights* are not on PyPI. Download
 # RemoteCLIP-ViT-B-32.pt into models/ — see README.

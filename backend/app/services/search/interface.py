@@ -52,11 +52,11 @@ logger = logging.getLogger("geoquery.search")
 # ── Mock tile database (Bengaluru area, five representative tiles) ─────────────
 # These tiles are only returned when mock_search=True.
 _MOCK_TILES: list[SemanticCandidate] = [
-    SemanticCandidate(tile_id="tile_001", bbox=[77.50, 12.90, 77.65, 13.05], score=0.87),
-    SemanticCandidate(tile_id="tile_002", bbox=[77.55, 12.85, 77.70, 13.00], score=0.81),
-    SemanticCandidate(tile_id="tile_003", bbox=[77.45, 12.95, 77.60, 13.10], score=0.76),
-    SemanticCandidate(tile_id="tile_004", bbox=[77.60, 12.80, 77.75, 12.95], score=0.71),
-    SemanticCandidate(tile_id="tile_005", bbox=[77.40, 13.00, 77.55, 13.15], score=0.65),
+    SemanticCandidate(tile_id="blr_001", bbox=[77.58999082, 12.96710844, 77.59920918, 12.97609156], score=0.87, image_url="/tiles/blr_001.png"),
+    SemanticCandidate(tile_id="bellandur_001", bbox=[77.65979147, 12.93200844, 77.66900853, 12.94099156], score=0.81, image_url="/tiles/bellandur_001.png"),
+    SemanticCandidate(tile_id="hebbal_001", bbox=[77.58338963, 13.03150844, 77.59261037, 13.04049156], score=0.76, image_url="/tiles/hebbal_001.png"),
+    SemanticCandidate(tile_id="majestic_001", bbox=[77.56669073, 12.97210844, 77.57590927, 12.98109156], score=0.71, image_url="/tiles/majestic_001.png"),
+    SemanticCandidate(tile_id="ulsoor_001", bbox=[77.58999065, 12.97650844, 77.59920935, 12.98549156], score=0.65, image_url="/tiles/ulsoor_001.png"),
 ]
 
 
@@ -157,6 +157,7 @@ def semantic_search(
                 tile_id=c["tile_id"],
                 bbox=c["bbox"],
                 score=float(c["score"]),
+                image_url=f"/tiles/{c['tile_id']}.png"
             )
             for c in raw_candidates
         ]
