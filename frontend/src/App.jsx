@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import Globe from "./Globe";
 import {
   runQuery, generateNDVIMap, generateNDWIMap,
-  runChangeDetection, semanticSearch, splitDateRange, defaultDateWindow,
+  runChangeDetection, semanticSearch, splitDateRange, defaultDateWindow, API_BASE,
 } from "./api";
 import {
   ArrowRight, Menu, X, Leaf, Droplets, Activity,
@@ -14,11 +14,16 @@ import {
 
 const ANALYSIS_META = {
   ndvi: { label: "Vegetation Health", icon: null, color: "#4ade80", description: "NDVI — Normalized Difference Vegetation Index", triggerMap: "ndvi" },
+  vegetation_health: { label: "Vegetation Health", icon: null, color: "#4ade80", description: "NDVI — Normalized Difference Vegetation Index", triggerMap: "ndvi" },
   ndwi: { label: "Water Bodies", icon: null, color: "#38bdf8", description: "NDWI — Normalized Difference Water Index", triggerMap: "ndwi" },
   water_extent: { label: "Water Extent", icon: null, color: "#38bdf8", description: "Water extent analysis via NDWI", triggerMap: "ndwi" },
   change: { label: "Change Detection", icon: null, color: "#fb923c", description: "Temporal NDVI change detection", triggerMap: "change" },
   water_extent_change: { label: "Water Extent Change", icon: null, color: "#a78bfa", description: "Water extent change over time", triggerMap: "change" },
   discovery: { label: "Scene Discovery", icon: null, color: "#e2e8f0", description: "Satellite scene discovery & metadata", triggerMap: null },
+  road_discovery: { label: "Infrastructure Discovery", icon: null, color: "#e2e8f0", description: "Road & infrastructure satellite observation", triggerMap: null },
+  water_body_discovery: { label: "Water Body Discovery", icon: null, color: "#38bdf8", description: "Water body satellite observation", triggerMap: null },
+  agricultural_area_discovery: { label: "Agricultural Discovery", icon: null, color: "#4ade80", description: "Agricultural area satellite observation", triggerMap: null },
+  clarification_needed: { label: "Clarification Needed", icon: null, color: "#fb7185", description: "Ambiguous query intent", triggerMap: null },
 };
 
 const EXAMPLE_QUERIES = [
@@ -262,12 +267,11 @@ function SemanticSearchResults({ searchResults, onError }) {
               {searchResults.candidates.map((candidate, index) => (
                 <article key={candidate.tile_id} style={{ overflow: "hidden", borderRadius: "18px", border: "1px solid rgba(150,210,170,0.18)", background: "rgba(255,255,255,0.035)" }}>
                   {candidate.image_url ? (
-                    <img src={candidate.image_url} alt={`Tile ${candidate.tile_id}`} style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", display: "block" }} onError={() => onError(`Cannot display tile ${candidate.tile_id}.`)} />
-                  ) : (
-                    <div style={{ width: "100%", aspectRatio: "1/1", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.2)" }}>
-                      <span>No image preview</span>
-                    </div>
-                  )}
+                    <img src={candidate.image_url} alt={`Tile ${candidate.tile_id}`} style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", display: "block" }} onError={(e) => { onError(`Cannot display tile ${candidate.tile_id}.`); e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
+                  ) : null}
+                  <div style={{ width: "100%", aspectRatio: "1/1", background: "rgba(255,255,255,0.05)", display: candidate.image_url ? "none" : "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.2)" }}>
+                    <span>Image unavailable</span>
+                  </div>
                   <div style={{ padding: "18px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", gap: "12px" }}>
                       <strong>#{index + 1} · {candidate.tile_id}</strong>
@@ -414,7 +418,7 @@ function App() {
         image_url: c.image_url?.startsWith("http")
           ? c.image_url
           : c.image_url
-          ? `http://127.0.0.1:8000${c.image_url}`
+          ? `${API_BASE}${c.image_url}`
           : `https://placehold.co/400x400/0a1f14/4ade80?text=TILE+${c.tile_id.split('_').pop()}`
       }));
       setSearchResults({ ...data, candidates });
@@ -435,11 +439,11 @@ function App() {
 
   const analysisType = result?.structured_query?.analysis || result?.analysis_result?.analysis || "unknown";
   const validationPassed = result?.validation_status === "passed";
-  const showNDVI = validationPassed && analysisType === "ndvi";
+  const showNDVI = validationPassed && (analysisType === "ndvi" || analysisType === "vegetation_health");
   const showNDWI = validationPassed && (analysisType === "ndwi" || analysisType === "water_extent");
   const showWaterExtent = validationPassed && (analysisType === "water_extent" || analysisType === "water_extent_change");
   const showChange = validationPassed && (analysisType === "change" || analysisType === "water_extent_change");
-  const showDiscovery = validationPassed && analysisType === "discovery";
+  const showDiscovery = validationPassed && ["discovery", "road_discovery", "water_body_discovery", "agricultural_area_discovery"].includes(analysisType);
   const hasGeoCoords = result?.geographic_result?.latitude != null && result?.geographic_result?.longitude != null;
 
   return (
@@ -552,7 +556,7 @@ function App() {
             <div className="analysis-result-block discovery-block">
               <div className="arb-header">
                 <Satellite size={18} color="#e2e8f0" />
-                <div><h3>Scene Discovery</h3><p>Sentinel-2 satellite scene found for the requested area</p></div>
+                <div><h3>{ANALYSIS_META[analysisType]?.label || "Scene Discovery"}</h3><p>Sentinel-2 satellite scene found for the requested area</p></div>
               </div>
               <MetricGrid metrics={result.analysis_result.metrics} />
             </div>

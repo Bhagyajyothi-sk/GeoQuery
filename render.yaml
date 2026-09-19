@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: geoquery-backend
+    env: python
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt && python scripts/download_models.py"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: MOCK_AI
+        value: "false"
+      - key: MOCK_SEARCH
+        value: "false"
+      - key: MOCK_GEO
+        value: "false"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: REMOTECLIP_MODEL_URL
+        sync: false
+      - key: FAISS_INDEX_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
