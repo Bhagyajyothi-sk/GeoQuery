@@ -13,7 +13,13 @@ The app is structured around three clean API groups:
 import logging
 from contextlib import asynccontextmanager
 
+import sys
 from pathlib import Path
+
+# Ensure backend/ directory is on sys.path so imports work regardless of launch directory
+_BACKEND_DIR = Path(__file__).resolve().parents[1]
+if str(_BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_DIR))
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware

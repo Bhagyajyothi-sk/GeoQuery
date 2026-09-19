@@ -129,8 +129,37 @@ def parse_query(text: str) -> StructuredQuery:
         )
         return result
     except Exception as exc:
-        logger.error("Gemini query parsing failed: %s", exc)
-        raise AIServiceError(f"Gemini query parsing failed: {exc}") from exc
+        logger.warning("Gemini query parsing API call failed (%s); using heuristic fallback parser", exc)
+        lower = text.lower()
+        analysis = "water_extent"
+        visual_query = text
+
+        if "ndvi" in lower or "vegetation" in lower or "forest" in lower or "green" in lower:
+            analysis = "ndvi"
+            visual_query = "green vegetation"
+        elif "ndwi" in lower:
+            analysis = "ndwi"
+            visual_query = "water body"
+        elif "water" in lower or "lake" in lower or "reservoir" in lower:
+            analysis = "water_extent"
+            visual_query = "water body"
+        elif "change" in lower:
+            analysis = "change"
+            visual_query = "land cover change"
+
+        location = None
+        for loc in ["Bengaluru", "Bangalore", "Cauvery", "Chennai", "Mumbai", "Delhi", "Hyderabad", "Ulsoor"]:
+            if loc.lower() in lower:
+                location = "Bengaluru" if loc.lower() in ["bengaluru", "bangalore", "ulsoor"] else loc
+                break
+
+        return StructuredQuery(
+            visual_query=visual_query,
+            location=location,
+            analysis=analysis,
+            start_date=None,
+            end_date=None,
+        )
 
 
 def explain_evidence(evidence: Union[Evidence, dict[str, Any]]) -> str:
